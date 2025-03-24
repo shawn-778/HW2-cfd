@@ -1,28 +1,23 @@
-import numpy as np
+import sympy as sp
+import random
 import matplotlib.pyplot as plt
 
-def f(x, k=1.0):
-    return np.sin(k*x)
 
-def fprime(x, k=1.0):
-    return k*np.cos(k*x)
+# 两种差分公式
+def diff_1(u, x_0, delta_x):
+    offsets = list(range(-1, 2, 1))
+    fun_value = [u.subs(x, x_0 + offset * delta_x) for offset in offsets]
+    u_x = (fun_value[2] - fun_value[0]) / (2 * delta_x)
+    u_xx = (fun_value[2] + fun_value[0] - 2 * fun_value[1]) / delta_x ** 2
+    return u_x, u_xx
 
-def fprime2(x, k=1.0):
-    return -k**2*np.sin(k*x)
 
-def forward_diff(fvals, h):
-    """前向差分：一阶精度"""
-    return (fvals[1:] - fvals[:-1]) / h
+def diff_2(u, x_0, delta_x):
+    offsets = list(range(0, 4, 1))
+    fun_value = [u.subs(x, x_0 + offset * delta_x) for offset in offsets]
+    u_x = (-11 * fun_value[0] + 18 * fun_value[1] - 9 * fun_value[2] + 2 * fun_value[3]) / (6 * delta_x)
+    u_xx = (2 * fun_value[0] - 5 * fun_value[1] + 4 * fun_value[2] - 1 * fun_value[3]) / delta_x ** 2
+    return u_x, u_xx
 
-def central_diff(fvals, h):
-    """中心差分：二阶精度"""
-    return (fvals[2:] - fvals[:-2]) / (2*h)
 
-def second_diff_3point(fvals, h):
-    """三点中心差分：二阶精度"""
-    return (fvals[:-2] - 2*fvals[1:-1] + fvals[2:]) / (h**2)
-
-def second_diff_5point(fvals, h):
-    """五点中心差分：四阶精度"""
-    return (-fvals[:-4] + 16*fvals[1:-3] - 30*fvals[2:-2] 
-            + 16*fvals[3:-1] - fvals[4:]) / (12*h**2)
+x = sp.symbols('x')
